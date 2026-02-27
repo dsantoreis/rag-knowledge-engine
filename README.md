@@ -130,5 +130,5 @@ rag-knowledge-engine/
 
 ## Author
 
-Daniel Santo Reis — Zurich, Switzerland
+Daniel Reis — Zurich, Switzerland
 AI/Agentic AI Developer | RAG Specialist | Multilingual (PT/EN/ES)
