@@ -4,6 +4,7 @@ from .models import IngestRequest, QueryRequest, QueryResponse, SourceRef
 from .store import store
 
 app = FastAPI(title="RAG Knowledge Engine", version="0.1.0")
+STARTED_AT = time.time()
 
 
 @app.get("/health")
@@ -16,6 +17,18 @@ def readyz():
     stats = store.stats()
     return {
         "ready": True,
+        "namespaces": stats["namespaces"],
+        "chunks": stats["chunks"],
+    }
+
+
+@app.get("/statusz")
+def statusz():
+    stats = store.stats()
+    return {
+        "status": "ok",
+        "version": app.version,
+        "uptime_sec": int(time.time() - STARTED_AT),
         "namespaces": stats["namespaces"],
         "chunks": stats["chunks"],
     }

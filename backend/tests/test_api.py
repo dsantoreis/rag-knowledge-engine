@@ -11,6 +11,16 @@ def test_health():
     assert r.json()["status"] == "ok"
 
 
+def test_statusz_includes_version_and_uptime():
+    res = client.get("/statusz")
+    assert res.status_code == 200
+    body = res.json()
+    assert body["status"] == "ok"
+    assert body["version"] == "0.1.0"
+    assert isinstance(body["uptime_sec"], int)
+    assert body["uptime_sec"] >= 0
+
+
 def test_readyz_reports_store_stats():
     baseline = client.get("/readyz")
     assert baseline.status_code == 200
