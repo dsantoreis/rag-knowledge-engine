@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cortex-backend
+  labels:
+    app: cortex-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cortex-backend
+  template:
+    metadata:
+      labels:
+        app: cortex-backend
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/dsantoreis/cortex-backend:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: UVICORN_HOST
+              value: 0.0.0.0
+            - name: UVICORN_PORT
+              value: "8000"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20

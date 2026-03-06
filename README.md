@@ -57,6 +57,16 @@ k6 run k6/stress.js
 docker compose up --build
 ```
 
+## Kubernetes
+
+```bash
+kubectl apply -f k8s/backend-deployment.yaml
+kubectl apply -f k8s/backend-service.yaml
+kubectl apply -f k8s/frontend-deployment.yaml
+kubectl apply -f k8s/frontend-service.yaml
+kubectl apply -f k8s/ingress.yaml
+```
+
 ## Docs
 
 - Architecture: `docs/architecture.md`
