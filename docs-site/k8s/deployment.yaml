@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cortex-docs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cortex-docs
+  template:
+    metadata:
+      labels:
+        app: cortex-docs
+    spec:
+      containers:
+        - name: docs
+          image: cortex-docs:latest
+          ports:
+            - containerPort: 4321

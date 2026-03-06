@@ -1,134 +1,106 @@
 # RAG Knowledge Engine
 
-Production-grade Retrieval-Augmented Generation pipeline for enterprise knowledge bases. Ingest documents, generate embeddings, perform semantic search, and deliver accurate LLM-powered answers grounded in your data.
+[![CI](../../actions/workflows/ci.yml/badge.svg)](#) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
-## Architecture
 
-```
-Documents (PDF/Web/API)
-        |
-   [ Ingestion Pipeline ]
-        |
-   [ Chunking + Preprocessing ]
-        |
-   [ Embedding Generation ]  ← OpenAI / Cohere / Local models
-        |
-   [ Vector Store ]           ← Supabase pgvector / Pinecone / Qdrant
-        |
-   [ Semantic Search ]
-        |
-   [ Context Assembly + Reranking ]
-        |
-   [ LLM Generation ]        ← Claude / GPT-4 / Gemini
-        |
-   [ Response + Citations ]
-```
+Enterprise-ready RAG starter with a **Python FastAPI backend** and **Next.js frontend** (chat + admin), test suite, load test profile, Docker stack, and CI gate.
 
-## Features
+## Stack
 
-- **Multi-format ingestion**: PDF, DOCX, HTML, Markdown, plain text, web scraping
-- **Intelligent chunking**: Semantic-aware splitting with configurable overlap and max tokens
-- **Hybrid search**: Combines vector similarity with BM25 keyword matching for best recall
-- **Reranking**: Cross-encoder reranking for precision on top-k results
-- **Multi-tenant**: Namespace isolation per client/project with row-level security
-- **Citation tracking**: Every answer includes source references with page/section numbers
-- **Streaming responses**: Real-time token streaming for responsive UX
-- **Evaluation suite**: Automated RAG quality metrics (faithfulness, relevance, coverage)
+- Backend: FastAPI + Pydantic
+- Frontend: Next.js App Router (React 19)
+- Tests: Pytest (unit/integration), Vitest (frontend)
+- Load: k6 stress script
+- Containers: multi-stage Dockerfiles + docker-compose
+- CI: GitHub Actions (`.github/workflows/ci.yml`)
 
-## Tech Stack
+## Quickstart
 
-| Component | Technology |
-|-----------|-----------|
-| Orchestration | LangChain / LlamaIndex |
-| Embeddings | OpenAI `text-embedding-3-large`, Cohere `embed-v3` |
-| Vector Store | Supabase pgvector (PostgreSQL) |
-| LLM | Claude 3.5 Sonnet, GPT-4o, Gemini Pro |
-| Reranker | Cohere Rerank v3 |
-| Backend | Python (FastAPI) / TypeScript (Node.js) |
-| Queue | Redis + BullMQ for async ingestion |
-| Monitoring | LangSmith / Langfuse for trace observability |
+```bash
+# 1) Backend
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
 
-## Performance
-
-| Metric | Value |
-|--------|-------|
-| Ingestion speed | ~500 pages/min |
-| Query latency (p95) | < 800ms |
-| Retrieval accuracy (top-5) | 94.2% |
-| Answer faithfulness | 97.1% |
-| Concurrent users | 200+ |
-| Documents indexed | 50K+ |
-
-## Use Cases
-
-- **Enterprise knowledge base**: Internal docs, policies, SOPs searchable by natural language
-- **Customer support**: AI agent that answers from product documentation with citations
-- **Legal document analysis**: Search across contracts, case law, regulatory filings
-- **Research assistant**: Academic papers, patents, technical specifications
-- **Compliance Q&A**: Regulatory frameworks (GDPR, SOX, HIPAA) with traceable answers
-
-## Key Differentiators
-
-**Hybrid Search with Reranking**
-Combines dense vector search with sparse BM25 retrieval, then applies cross-encoder reranking. This consistently outperforms pure vector search by 15-20% on recall benchmarks.
-
-**Evaluation-Driven Development**
-Built-in evaluation pipeline measures faithfulness (does the answer match sources?), relevance (does it answer the question?), and coverage (are all relevant chunks retrieved?). Every change is validated against these metrics.
-
-**Production Hardening**
-Rate limiting, circuit breakers, graceful degradation, embedding cache, and automatic retry with exponential backoff. Designed for enterprise SLAs.
-
-## API Example
-
-```python
-# Ingest documents
-POST /api/v1/ingest
-{
-  "source": "https://docs.example.com/manual.pdf",
-  "namespace": "product-docs",
-  "chunk_size": 512,
-  "chunk_overlap": 50
-}
-
-# Query with RAG
-POST /api/v1/query
-{
-  "question": "What is the return policy for international orders?",
-  "namespace": "product-docs",
-  "top_k": 5,
-  "rerank": true,
-  "stream": true
-}
-
-# Response
-{
-  "answer": "International orders can be returned within 30 days...",
-  "sources": [
-    {"document": "return-policy.pdf", "page": 3, "score": 0.94},
-    {"document": "shipping-guide.pdf", "page": 12, "score": 0.87}
-  ],
-  "tokens_used": 1847,
-  "latency_ms": 623
-}
+# 2) Frontend
+cd ../frontend
+npm install
+npm run dev
 ```
 
-## Project Structure
+Open `http://localhost:3000`.
 
+## API
+
+- `GET /health`
+- `POST /api/v1/ingest`
+- `POST /api/v1/query`
+
+## Tests
+
+```bash
+cd backend && pytest -q
+cd ../frontend && npm test
 ```
-rag-knowledge-engine/
-  src/
-    ingestion/        # Document loaders + chunking
-    embeddings/       # Embedding generation + caching
-    retrieval/        # Vector search + BM25 + reranking
-    generation/       # LLM prompting + streaming
-    evaluation/       # RAG quality metrics
-    api/              # FastAPI endpoints
-  config/             # Model configs, prompts, parameters
-  tests/              # Unit + integration + eval tests
-  scripts/            # Ingestion scripts, benchmarks
+
+## Load Test
+
+```bash
+k6 run k6/stress.js
 ```
 
-## Author
+## Docker
 
-Daniel Reis — Zurich, Switzerland
-AI/Agentic AI Developer | RAG Specialist | Multilingual (PT/EN/ES)
+```bash
+docker compose up --build
+```
+
+## Kubernetes
+
+```bash
+kubectl apply -f k8s/backend-deployment.yaml
+kubectl apply -f k8s/backend-service.yaml
+kubectl apply -f k8s/frontend-deployment.yaml
+kubectl apply -f k8s/frontend-service.yaml
+kubectl apply -f k8s/ingress.yaml
+```
+
+## Docs
+
+- Architecture: `docs/architecture.md`
+- Security: `SECURITY.md`
+- Contribution guide: `CONTRIBUTING.md`
+- Change history: `CHANGELOG.md`
+
+
+## Conversion Standard
+
+### Hero
+Production-ready solution for a concrete business problem with measurable outcome.
+
+### Problem
+Describe the pain with one sentence and a real operator context.
+
+### Demo
+Add a GIF at `docs/assets/demo.gif` and reference it here.
+
+### Quickstart (3 commands)
+```bash
+make setup || pnpm install || npm install
+make test || pnpm test || npm test
+make run || pnpm dev || npm run dev
+```
+
+### Architecture
+Document API, workers, and storage in `docs/architecture.md`.
+
+### Results
+Add benchmark, latency, throughput, or conversion impact.
+
+### Roadmap
+Include 30-day and 90-day milestones.
+
+### CTA
+If this helps, star the repo and open an issue with your use case.

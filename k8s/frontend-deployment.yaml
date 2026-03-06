@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cortex-frontend
+  labels:
+    app: cortex-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cortex-frontend
+  template:
+    metadata:
+      labels:
+        app: cortex-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ghcr.io/dsantoreis/cortex-frontend:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NEXT_PUBLIC_API_BASE
+              value: /api
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
