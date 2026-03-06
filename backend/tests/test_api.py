@@ -11,6 +11,25 @@ def test_health():
     assert r.json()["status"] == "ok"
 
 
+def test_readyz_reports_store_stats():
+    baseline = client.get("/readyz")
+    assert baseline.status_code == 200
+    base_body = baseline.json()
+
+    ing = client.post(
+        "/api/v1/ingest",
+        json={"source": "readyz.md", "namespace": "readyz-test", "chunk_size": 512, "chunk_overlap": 50},
+    )
+    assert ing.status_code == 200
+
+    after = client.get("/readyz")
+    assert after.status_code == 200
+    body = after.json()
+    assert body["ready"] is True
+    assert body["namespaces"] >= base_body["namespaces"]
+    assert body["chunks"] > base_body["chunks"]
+
+
 def test_ingest_and_query_integration():
     ing = client.post(
         "/api/v1/ingest",

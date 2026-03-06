@@ -14,6 +14,11 @@ class InMemoryStore:
     def __init__(self) -> None:
         self._db: Dict[str, List[Chunk]] = defaultdict(list)
 
+    def stats(self) -> dict:
+        namespaces = len(self._db)
+        chunks = sum(len(items) for items in self._db.values())
+        return {"namespaces": namespaces, "chunks": chunks}
+
     def ingest(self, namespace: str, source: str, text: str) -> int:
         chunks = [part.strip() for part in text.split(".") if part.strip()]
         for idx, chunk in enumerate(chunks, start=1):

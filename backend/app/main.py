@@ -11,6 +11,16 @@ def health():
     return {"status": "ok"}
 
 
+@app.get("/readyz")
+def readyz():
+    stats = store.stats()
+    return {
+        "ready": True,
+        "namespaces": stats["namespaces"],
+        "chunks": stats["chunks"],
+    }
+
+
 @app.post("/api/v1/ingest")
 def ingest(payload: IngestRequest):
     inserted = store.ingest(
