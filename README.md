@@ -1,5 +1,8 @@
 # RAG Knowledge Engine
 
+[![CI](../../actions/workflows/ci.yml/badge.svg)](#) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+
+
 Enterprise-ready RAG starter with a **Python FastAPI backend** and **Next.js frontend** (chat + admin), test suite, load test profile, Docker stack, and CI gate.
 
 ## Stack
@@ -60,3 +63,34 @@ docker compose up --build
 - Security: `SECURITY.md`
 - Contribution guide: `CONTRIBUTING.md`
 - Change history: `CHANGELOG.md`
+
+
+## Conversion Standard
+
+### Hero
+Production-ready solution for a concrete business problem with measurable outcome.
+
+### Problem
+Describe the pain with one sentence and a real operator context.
+
+### Demo
+Add a GIF at `docs/assets/demo.gif` and reference it here.
+
+### Quickstart (3 commands)
+```bash
+make setup || pnpm install || npm install
+make test || pnpm test || npm test
+make run || pnpm dev || npm run dev
+```
+
+### Architecture
+Document API, workers, and storage in `docs/architecture.md`.
+
+### Results
+Add benchmark, latency, throughput, or conversion impact.
+
+### Roadmap
+Include 30-day and 90-day milestones.
+
+### CTA
+If this helps, star the repo and open an issue with your use case.
